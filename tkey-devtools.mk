@@ -7,7 +7,7 @@
 # is not in the default PATH. Add it if present. FIXME: Hardcoding 1.23 here
 # will lead to problems sometime in the future. But as long as it's in the
 # os-dependencies.yml in the manifest, we should be safe.
-kO_UBUNTU_DIR ?= /usr/lib/go-1.23/bin
+GO_UBUNTU_DIR ?= /usr/lib/go-1.23/bin
 ifneq (,$(wildcard $(GO_UBUNTU_DIR)/go))
   export PATH := $(GO_UBUNTU_DIR):$(PATH)
 endif
@@ -21,4 +21,5 @@ tkey-devtools-clean:
 	$(MAKE) -C $(TKEY_DEVTOOLS_DIR) clean
 
 tkey-devtools-test:
-	$(MAKE) -C $(TKEY_DEVTOOLS_DIR) cilint
+	@test -e ./tkey-qemu-CDC.pty || { echo "CDC PTY symlink not found. Run: make qemu-usb-mux <pts-number>"; exit 1; }
+	./tkey-devtools/tkey-runapp --port ./tkey-qemu-CDC.pty ./tillitis-key1/hw/application_fpga/apps/testapp.bin
